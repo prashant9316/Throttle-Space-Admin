@@ -4,6 +4,7 @@ import axios from "axios";
 import { useDropzone } from "react-dropzone";
 import cloudinary from "cloudinary/lib/cloudinary";
 import { FiUploadCloud, FiXCircle } from "react-icons/fi";
+import shortid from "shortid";
 
 //internal import
 import useAsync from "hooks/useAsync";
@@ -32,7 +33,7 @@ const Uploader = ({ setImageUrl, imageUrl, product, folder }) => {
     accept: "image/*",
     multiple: product ? true : false,
     maxSize: 50000000,
-    maxFiles: globalSetting?.number_of_image_per_product || 2,
+    maxFiles: 6,
     onDrop: (acceptedFiles) => {
       setFiles(
         acceptedFiles.map((file) =>
@@ -54,7 +55,7 @@ const Uploader = ({ setImageUrl, imageUrl, product, folder }) => {
               <li key={e.code}>
                 {e.code === "too-many-files"
                   ? notifyError(
-                      `Maximum ${globalSetting?.number_of_image_per_product} Image Can be Upload!`
+                      `Maximum 6 Image Can be Upload!`
                     )
                   : notifyError(e.message)}
               </li>
@@ -88,7 +89,7 @@ const Uploader = ({ setImageUrl, imageUrl, product, folder }) => {
         }
 
         const name = file.name.replaceAll(/\s/g, "");
-        const public_id = name?.substring(0, name.lastIndexOf("."));
+        const public_id = name?.substring(0, name.lastIndexOf(".")) + "_" + shortid.generate();
 
         const formData = new FormData();
         formData.append("file", file);
